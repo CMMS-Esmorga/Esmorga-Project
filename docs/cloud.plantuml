@@ -1,0 +1,67 @@
+@startuml Esmorga Cloud Infrastructure
+
+allow_mixing
+left to right direction
+
+title Base Cloud Infrastructure Diagram
+
+package "Esmorga DNS" as dns {
+    circle "api.esmorgaevents.com" as esmorga_dns
+    circle "qa.api.esmorgaevents.com" as esmorga_qa_dns
+    circle "mockserver.esmorgaevents.com" as esmorga_mock_dns
+    circle "mail.esmorgaevents.com" as esmorga_mail_dns
+}
+
+cloud "Oracle Cloud" {
+    node "Ubuntu VM" as ubuntu_vm {
+        port "80\n(HTTP)" as http
+        port "443\n(HTTPS)" as https
+        process "NGINX\nnginx.service" as nginx
+        process "**Backend QA**\nNode server\nPort 3000\nesmorga.service" as node_qa
+        process "**Backend PROD**\nNode server\nPort 4000\nprod-esmorga.service" as node_prod
+        'https://www.mock-server.com/where/maven_central.html
+        process "Mock server port 4080\n(Backend Mocks)\nmock.service" as mock_server
+        'https://mailcatcher.me/
+        process "Mail Server" as mail_server
+        process "AI Agent\nMyAiAgent.service" as ai_agent
+        http --> https
+        https --> nginx
+        node_qa -[hidden]r-> node_prod
+    }
+}
+
+cloud "MongoDB Cloud\n@mongodb.com" as mongocloud {
+    node "MongoDB instance" as mongo_instance {
+        database "MongoDB QA (esmorga)" as mongodb_qa
+        database "MongoDB PROD (prod-esmorga)" as mongodb_prod
+    }
+}
+
+cloud "Google" as google {
+    node "Gemini AI" as gemini
+    node "Gmail\nesmorgamailservice@gmail.com" as gmail
+}
+
+cloud "Jira" as jira {
+    node "Esmorga Project" as jira_project
+}
+
+esmorga_dns --> http
+esmorga_qa_dns --> http
+esmorga_dns --> https
+esmorga_qa_dns --> https
+nginx --> mock_server : reverse proxy (QA)
+mock_server --> node_qa
+nginx --> node_prod : reverse proxy (PROD)
+node_qa --> mongodb_qa
+node_prod --> mongodb_prod
+esmorga_mock_dns --> mock_server
+esmorga_mail_dns --> mail_server
+ai_agent --> gemini
+ai_agent --> jira_project
+nginx -[hidden]d-> mail_server
+node_qa -u-> gmail: SMTP
+node_prod -u-> gmail: SMTP
+
+@enduml
+

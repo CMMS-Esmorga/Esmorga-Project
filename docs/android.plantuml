@@ -1,0 +1,103 @@
+@startuml Esmorguitecture Android simplified
+
+title Esmorga Android App Architecture simplified (static deps)
+
+[App] as A
+[Data] as DA
+[DesignSystem] as DSY
+[Domain] as DO
+[View] as V
+[Common] as CM
+component DataSource as DSO {
+    [DSLocal] as DSL
+    [DSRemote] as DSR
+}
+
+A .u.> DSL
+A .u.> DSR
+A .u.> V
+A .u.> DO
+DA .u.> DO
+DSL .u.> DA
+DSR .u.> DA
+V .u.> DO
+V .d.> DSY
+CM -l[hidden]-> DSY
+
+@enduml
+
+
+@startuml Esmorguitecture Android extended
+
+title Esmorga Android App Architecture (extented)
+
+package App as A {
+    [AndroidApp] as AA
+    [DI🐙] as DI
+    AA .u.> DI
+}
+
+package View as UI {
+    [View] as V
+    [ViewModel] as VM
+    [UIState] as UIS
+    [DI🐙] as VDI
+    V .u.> VM
+    V .u.> UIS
+    VM ..> UIS
+}
+
+package "DesignSystem" as DS {
+}
+
+package Domain {
+    [UseCase] as UC
+    [RepositoryInteface] as RINT
+    [DomainModel] as DM
+    [DI🐙] as DODI
+    UC .r.> RINT
+    UC .u.> DM
+}
+
+package Data {
+    [DataSourceInterface] as DSINT
+    [Mapper] as MP
+    [RepositoryImplementation] as RIMP
+    [DI🐙] as DADI
+    RIMP .d.> DSINT
+    RIMP .d.> MP
+}
+
+package DataSource {
+    package LocalDS as DSL {
+        [LocalDSImplementation] as DSLIMP
+        [LocalModel] as LM
+        [DB] as DB
+        [DAO] as DAO
+        [DI🐙] as LDDI
+        DSLIMP ..> LM
+        DSLIMP ..> DAO
+        DSLIMP ..> DB
+    }
+    package RemoteDS as DSR {
+        [RemoteDSImplementation] as DSRIMP
+        [API] as API
+        [RemoteModel] as RM
+        [DI🐙] as RDDI
+        DSRIMP ..> API
+        DSRIMP ..> RM
+    }
+}
+
+RIMP .u.> RINT
+DSLIMP .u.> DSINT
+DSRIMP .u.> DSINT
+VM .u.> UC
+A .u.> UI
+A ..> Domain
+A ..> Data
+A .u.> DataSource
+V .d.> DS
+A -d[hidden]-> DS
+
+@enduml

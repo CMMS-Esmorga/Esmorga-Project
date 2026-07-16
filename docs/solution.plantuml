@@ -1,0 +1,22 @@
+@startuml Esmorguitecture solution Architecture
+
+title Esmorga Solution Architecture
+
+package Client {
+    [iOS App] as IOS
+    [Android App] as AND
+}
+
+package Server {
+    [Backend] as BE
+    [MongoDB] as MDB
+}
+
+IOS .r.> BE
+AND .r.> BE
+BE .d.> MDB
+
+AND -d[hidden]-> IOS
+Client -l[hidden]-> Server
+
+@enduml

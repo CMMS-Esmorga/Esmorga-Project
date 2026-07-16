@@ -1,0 +1,37 @@
+@startuml Esmorguitecture Backend
+
+title Esmorga Backend Architecture (static deps)
+
+package Application as App {
+    [Service] as S
+}
+
+package Config {
+    [Logger] as L
+}
+
+package Domain as D {
+    [Error]
+}
+
+package Infrastructure as INFRA {
+    package HTTP {
+        [Controller] as C
+        [DTO] as DTO
+        C ..> DTO
+    }
+    package DB {
+        [Repository] as RP
+        [DataAccess] as DA
+        RP .d.> DA
+        DA .d.> MongoDB
+    }
+}
+
+C .u.> S
+S .d.> RP
+S .r.> Error
+App .d.> L
+INFRA .d.> L
+
+@enduml

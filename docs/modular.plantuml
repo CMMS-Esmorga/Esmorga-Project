@@ -1,0 +1,54 @@
+@startuml Esmorguitecture New Architecture
+
+title Esmorga Modular Architecture (proposal)
+
+package "Functional Module 1" as M1 {
+    [Facade] as F1
+    [DI🐙] as DI1
+    [UI] as UI1
+    component "Infra (Domain)" as INF1
+    [Domain] as DOM1
+    F1 .r.> DI1
+    F1 .u.> UI1
+    UI1 .u.> DOM1
+    INF1 .u.> DOM1
+}
+
+package "Functional Module 2" as M2 {
+    [Facade] as F2
+    [DI🐙] as DI2
+    [UI] as UI2
+    component "Infra (Domain)" as INF2
+    [Domain] as DOM2
+    F2 .r.> DI2
+    F2 .u.> UI2
+    UI2 .u.> DOM2
+    INF2 .u.> DOM2
+
+}
+
+package App {
+    [Main] as Main
+    [DI🐙] as ADI
+    Main .r.> ADI
+}
+
+[CommonDomain] as CMD
+[CommonUI] as CMUI
+[CommonInfra] as CMINF
+
+App .u.> F1
+App .u.> F2
+
+DOM1 .u.> CMD
+DOM2 .u.> CMD
+
+INF1 ..> CMINF
+INF2 ..> CMINF
+
+UI1 ..> CMUI
+UI2 ..> CMUI
+
+CMINF -u[hidden]-> CMUI
+
+@enduml

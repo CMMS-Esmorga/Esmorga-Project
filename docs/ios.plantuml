@@ -1,0 +1,98 @@
+@startuml
+title Esmorga iOS App Architecture simplified (static deps)
+
+[Main] as M
+[Screens] as UI
+[DesignSystem] as DS
+[Data] as D
+[Core] as CO
+[API] as API
+[Common] as CM
+
+M .u.> UI
+UI .u.> D
+UI ..> DS
+D ..> CO
+D ..> API
+CO ..> CM
+API ..> CM
+D .d.> CM
+UI .d.> CM
+M .d.> CM
+@enduml
+
+
+@startuml
+title Esmorga iOS App Architecture (extented)
+
+package Main {
+    [App] as A
+    [AppDelegate] as AD
+    A .u.> AD
+}
+
+package "Screens" as UI {
+    [View] as V
+    [ViewModel] as VM
+    [Coordinator] as C
+    [UIModel] as UIM
+    [Builder] as B
+
+    B .u.> V
+    B .u.> VM
+    B <.u.> C
+    V .u.> VM
+    C <.u. VM
+    V .u.> UIM
+    VM ..> UIM
+}
+
+package "DesignSystem" as DS {
+}
+
+package Data {
+    [UseCase] as UC
+    [Repository] as R
+    [DataSource] as DataS
+    UC ..> R
+    R ..> DataS
+}
+
+package Core {
+    [CoreData] as CD
+    [Keychain] as K
+    [CoreDataModel] as CDM
+}
+
+package API {
+    [NetworkService] as NS
+    [Model] as NM
+}
+
+/'
+package Common { 
+}'/
+
+A ..> UI
+DS -d[hidden]-> A
+
+V .d.> DS
+
+VM .u.> UC
+
+R .d.> K
+
+DataS .d.> CD
+DataS .d.> NS
+
+A -u[hidden]-> UI
+
+/'
+Main .d.> Common
+UI .d.> Common
+Data .d.> Common
+Core .d.> Common
+API .d.> Common
+'/
+
+@enduml
